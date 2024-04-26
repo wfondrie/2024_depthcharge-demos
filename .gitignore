@@ -8,6 +8,18 @@ figures/
 *-output/
 *_out/
 *_output/
+*.lance/
+train/
+test/
+valid/
+logs/
+lightning_logs/
+env/
+.env/
+sage-v*/
+sage
+human.fasta
+sage.json
 
 #########
 # MacOS #

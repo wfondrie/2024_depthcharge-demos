@@ -1,44 +1,19 @@
 .PHONY: clean lint sync run jupyter
-CONDA := $(or $(shell which mamba), conda)
-CONDA_ACTIVATE=source $$(${CONDA} info --base)/etc/profile.d/conda.sh ; ${CONDA} activate ; ${CONDA} activate
+CONDA_ACTIVATE=source $$(conda info --base)/etc/profile.d/conda.sh ; conda activate ; conda activate
 
 #################################################################################
 # COMMANDS                                                                      #
 #################################################################################
 
-## Create or update your conda environment
-env: environment.yaml
-	$(CONDA) env update -p ./env -f environment.yaml --prune
-	@echo
-	@echo ">>> Activate your Conda Environment:"
-	@echo "    $ conda activate ./env"
-	@echo
+## Start the spectrum quality notebook
+spectrum-quality: notebooks/spectrum-quality
+	${CONDA_ACTIVATE} $</env && cd $< && \
+		jupyter lab --port 8999
 
-## Start Jupyter Lab in the project environment
-jupyter: env
-	${CONDA_ACTIVATE} ./envs && cd notebooks && jupyter lab
+notebooks/%: notebooks/%/env.yml
+	conda env update -p $@/env -f $< --prune
 
-## Delete all compiled Python files
-clean:
-	find . -type f -name "*.py[co]" -delete
-	find . -type d -name "__pycache__" -delete
 
-## Lint using ruff
-lint:
-	ruff src
-
-## Sync to your data source
-sync:
-	@echo "Add your data source to the makefile."
-
-#################################################################################
-# PROJECT RULES                                                                 #
-# Here is where project specific Make targets should be defined.				#
-#################################################################################
-
-## Regenerate your analyses
-run:
-	@echo "Add the steps of your analysis to this rule."
 
 #################################################################################
 # Self Documenting Commands                                                     #
