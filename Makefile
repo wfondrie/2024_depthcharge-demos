@@ -7,11 +7,11 @@ CONDA_ACTIVATE=source $$(conda info --base)/etc/profile.d/conda.sh ; conda activ
 
 ## Start the spectrum quality notebook
 spectrum-quality: notebooks/spectrum-quality
-	${CONDA_ACTIVATE} $</env && cd $< && \
+	${CONDA_ACTIVATE} $@ && cd $< && \
 		jupyter lab --port 8999
 
 notebooks/%: notebooks/%/env.yml
-	conda env update -p $@/env -f $< --prune
+	conda env update -n $* -f $< --prune
 
 
 
