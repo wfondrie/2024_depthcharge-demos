@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Assign PSMs with Sage"""
+
 import json
 import logging
 import subprocess
@@ -40,8 +41,8 @@ def select_files(n_train, n_valid, n_test, seed):
             separator="\t",
         )
         .select(
-            pl.col("spectrum_filename").
-            str.splitn("/", 2)
+            pl.col("spectrum_filename")
+            .str.splitn("/", 2)
             .struct.rename_fields(["acc", "file"])
         )
         .unnest("spectrum_filename")
@@ -53,9 +54,9 @@ def select_files(n_train, n_valid, n_test, seed):
     )
 
     splits = [
-        mskb_files[:n_train],                                          # Train
-        mskb_files[n_train:(n_train + n_valid)],                       # Valid
-        mskb_files[(n_train + n_valid):(n_train + n_valid + n_test)],  # Test
+        mskb_files[:n_train],  # Train
+        mskb_files[n_train : (n_train + n_valid)],  # Valid
+        mskb_files[(n_train + n_valid) : (n_train + n_valid + n_test)],  # Test
     ]
 
     mzml_files = {}
@@ -100,7 +101,9 @@ def search_files(mzml_files):
     """
     search_results = {}
     for split, split_files in mzml_files.items():
-        search_results[split] = ROOT / f"data/spectrum-quality/{split}/results.sage.parquet"
+        search_results[split] = (
+            ROOT / f"data/spectrum-quality/{split}/results.sage.parquet"
+        )
         if not search_results[split].exists():
             # This is just a safety check to prevent someone from injecting malicious code.
             if split not in ["train", "valid", "test"]:
@@ -120,6 +123,7 @@ def search_files(mzml_files):
                 "--fasta",
                 str(ROOT / "data/fasta/human.fasta"),
                 str(ROOT / "data/manual/sage.json"),
+                split_files,
                 "2>",
                 f"logs/sage-{split}.log",
                 "1>",
@@ -130,6 +134,7 @@ def search_files(mzml_files):
             LOGGER.info("Using previous search results for %s split.", split)
 
     return search_results
+
 
 @click.command()
 @click.option("-s", "--seed", help="The random seed.", default=42, type=int)
