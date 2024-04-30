@@ -162,7 +162,7 @@ def main(n_train, n_valid, n_test, seed):
     with (ROOT / "data/spectrum-quality/splits.json").open("w+") as out:
         json.dump(mzml_files, out)
 
-    LOGGER.info("Elapesed time: %f", (start - time.time()) / 60)
+    LOGGER.info("Elapesed time: %f", (time.time() - start) / 60)
     LOGGER.info("DONE!")
 
 
