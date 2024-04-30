@@ -114,7 +114,7 @@ def search_files(mzml_files):
                 split,
                 split,
             )
-            split_files = " ".join(f"'{f}'" for f in split_files)
+            split_files = [f"'{f}'" for f in split_files]
             cmd = [
                 "bin/sage",
                 "--parquet",
@@ -123,7 +123,7 @@ def search_files(mzml_files):
                 "--fasta",
                 str(ROOT / "data/fasta/human.fasta"),
                 str(ROOT / "data/manual/sage.json"),
-                split_files,
+                *split_files,
                 "2>",
                 f"logs/sage-{split}.log",
                 "1>",
