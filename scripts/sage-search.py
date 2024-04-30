@@ -125,7 +125,7 @@ def search_files(mzml_files):
                 str(ROOT / "data/manual/sage.json"),
                 *split_files,
                 "2>",
-                f"logs/sage-{split}.log",
+                str(ROOT / f"logs/sage-{split}.log"),
                 "1>",
                 "/dev/null",
             ]
@@ -149,6 +149,7 @@ def main(n_train, n_valid, n_test, seed):
         format="%(levelname)s: %(message)s",
     )
 
+    (ROOT / "logs").mkdir(exist_ok=True)
     (ROOT / "data/mzml").mkdir(exist_ok=True, parents=True)
     (ROOT / "data/spectrum-quality").mkdir(exist_ok=True)
     ppx.set_data_dir(ROOT / "data/mzml")
