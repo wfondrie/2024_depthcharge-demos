@@ -21,7 +21,7 @@ env: env.yml
 
 data/spectrum-quality.tar.gz: bin/sage data/manual/sage.json data/fasta/human.fasta scripts/sage-search.py
 	${CONDA_ACTIVATE} 2024_depthcharge-demos \
-		&& python scripts/sage-search.py -s 42 1 1 1
+		&& python scripts/sage-search.py -s 42 10 5 5
 	tar czf data/spectrum-quality.tar.gz data/spectrum-quality
 
 data/fasta/human.fasta:
