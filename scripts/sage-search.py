@@ -129,7 +129,7 @@ def search_files(mzml_files):
                 "1>",
                 "/dev/null",
             ]
-            subprocess.run(cmd, check=True)
+            subprocess.run(cmd, shell=True, check=True)
         else:
             LOGGER.info("Using previous search results for %s split.", split)
 
