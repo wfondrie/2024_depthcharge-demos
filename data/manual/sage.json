@@ -1,0 +1,7 @@
+{
+    "database": {"bucket_size": 8192},
+    "precursor_tol": {"da": [-500, 500]},
+    "fragment_tol": {"ppm": [-10, 10]},
+    "static_mods": {"C": 57.0215},
+    "variable_mods": {"M": [15.9949]}
+}

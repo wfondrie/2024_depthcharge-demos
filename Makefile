@@ -1,4 +1,4 @@
-.PHONY: clean lint sync run jupyter
+.PHONY: spectrum-quality data env
 CONDA_ACTIVATE=source $$(conda info --base)/etc/profile.d/conda.sh ; conda activate ; conda activate
 
 #################################################################################
@@ -13,7 +13,27 @@ spectrum-quality: notebooks/spectrum-quality
 notebooks/%: notebooks/%/env.yml
 	conda env update -n $* -f $< --prune
 
+## Create the data for this project:
+data: data/spectrum-quality.tar.gz
 
+env: env.yml
+	conda env update -f env.yml --prune
+
+data/spectrum-quality.tar.gz: bin/sage data/manual/sage.json data/fasta/human.fasta scripts/sage-search.py
+	${CONDA_ACTIVATE} 2024_depthcharge-demos \
+		&& python scripts/sage-search.py -s 42 1 1 1
+	tar czf data/spectrum-quality.tar.gz data/spectrum-quality
+
+data/fasta/human.fasta:
+	mkdir -p data/fasta
+	curl -sL "https://rest.uniprot.org/uniprotkb/stream?compressed=true&format=fasta&query=%28%28proteome%3AUP000005640%29+AND+reviewed%3Dtrue%29" \
+    | gunzip -c > data/fasta/human.fasta
+
+bin/sage:
+	mkdir -p bin
+	curl -sL https://github.com/lazear/sage/releases/download/v0.14.7/sage-v0.14.7-x86_64-unknown-linux-gnu.tar.gz \
+		| tar xzfO /dev/stdin sage-*/sage > bin/sage
+	chmod u+x bin/sage
 
 #################################################################################
 # Self Documenting Commands                                                     #
