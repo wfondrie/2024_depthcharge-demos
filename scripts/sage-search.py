@@ -32,8 +32,10 @@ def select_files(n_train, n_valid, n_test, seed):
 
     Returns
     -------
-    dict[str, tuple[str,str]]
-        The split, MassIVE identifier, and file name for selected each file.
+    local_files: dict[str, list[tuple[str,str]]]
+        The split, MassIVE identifier, and local path for selected each file.
+    splits: dict[str, list[tuple[str,str]]]
+        The split, MassIVE identifier, and remote path for selected each file.
     """
     mskb_files = (
         pl.read_csv(
@@ -53,19 +55,19 @@ def select_files(n_train, n_valid, n_test, seed):
         .rows()
     )
 
-    splits = [
-        mskb_files[:n_train],  # Train
-        mskb_files[n_train : (n_train + n_valid)],  # Valid
-        mskb_files[(n_train + n_valid) : (n_train + n_valid + n_test)],  # Test
-    ]
+    splits = {
+        "train": mskb_files[:n_train],
+        "valid": mskb_files[n_train : (n_train + n_valid)], 
+        "test": mskb_files[(n_train + n_valid) : (n_train + n_valid + n_test)],
+    }
 
-    mzml_files = {}
-    for label, split in zip(["train", "valid", "test"], splits):
-        mzml_files[label] = []
+    local_files = {}
+    for label, split in splits.items():
+        local_files[label] = []
         for acc, fname in split:
-            mzml_files[label].append(download(acc, fname))
+            local_files[label].append(download(acc, fname))
 
-    return mzml_files
+    return local_files, splits
 
 
 def download(massive_id, fname):
@@ -155,13 +157,13 @@ def main(n_train, n_valid, n_test, seed):
     ppx.set_data_dir(ROOT / "data/mzml")
 
     LOGGER.info("Downloading selected files...")
-    mzml_files = select_files(n_train, n_valid, n_test, seed)
+    mzml_files, splits = select_files(n_train, n_valid, n_test, seed)
 
     LOGGER.info("Performing OMS searches with Sage...")
     search_files(mzml_files)
 
     with (ROOT / "data/spectrum-quality/splits.json").open("w+") as out:
-        json.dump(mzml_files, out)
+        json.dump(splits, out)
 
     LOGGER.info("Elapesed time: %f", (time.time() - start) / 60)
     LOGGER.info("DONE!")
