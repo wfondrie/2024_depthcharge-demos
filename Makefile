@@ -1,4 +1,4 @@
-.PHONY: spectrum-quality data env
+.PHONY: spectrum-quality spectrum-quality-data env
 CONDA_ACTIVATE=source $$(conda info --base)/etc/profile.d/conda.sh ; conda activate ; conda activate
 
 #################################################################################
@@ -10,9 +10,7 @@ spectrum-quality: notebooks/spectrum-quality
 	${CONDA_ACTIVATE} $@ && cd $< && \
 		jupyter lab --port 8999
 
-## Create the data for the spectrum quality task.
-## This will download a bunch of mzML files and
-## search them with Sage.
+## Download and search data for the  spectrum quality task.
 spectrum-quality-data: data/spectrum-quality.tar.gz
 
 env: env.yml
