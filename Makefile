@@ -10,11 +10,10 @@ spectrum-quality: notebooks/spectrum-quality
 	${CONDA_ACTIVATE} $@ && cd $< && \
 		jupyter lab --port 8999
 
-notebooks/%: notebooks/%/env.yml
-	conda env update -n $* -f $< --prune
-
-## Create the data for this project:
-data: data/spectrum-quality.tar.gz
+## Create the data for the spectrum quality task.
+## This will download a bunch of mzML files and
+## search them with Sage.
+spectrum-quality-data: data/spectrum-quality.tar.gz
 
 env: env.yml
 	conda env update -f env.yml --prune
