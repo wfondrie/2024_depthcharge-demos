@@ -1,18 +1,24 @@
-.PHONY: spectrum-quality spectrum-quality-data env
+.PHONY: spectrum-quality-data env
 CONDA_ACTIVATE=source $$(conda info --base)/etc/profile.d/conda.sh ; conda activate ; conda activate
 
 #################################################################################
 # COMMANDS                                                                      #
 #################################################################################
 
+## Start the de novo notebook
+de-novo:
+
 ## Start the spectrum quality notebook
-spectrum-quality: notebooks/spectrum-quality
-	${CONDA_ACTIVATE} $@ && cd $< && \
+spectrum-quality:
+
+%: notebooks/%
+	${CONDA_ACTIVATE} 2024_depthcharge-demos && cd $< && \
 		jupyter lab --port 8999
 
 ## Download and search data for the  spectrum quality task.
 spectrum-quality-data: data/spectrum-quality.tar.gz
 
+## Create and/or update the conda environment.
 env: env.yml
 	conda env update -f env.yml --prune
 
